@@ -2,9 +2,9 @@ import os
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import math 
-import pickle
-import env_realCase
+#import math 
+#import pickle
+import env_
 import Benchmarks
 from textwrap import wrap
 from plotly.subplots import make_subplots
@@ -15,22 +15,19 @@ if not os.path.exists('Figures'):
 
 
 
-# an extremely messy file that needs to be organized
+# needs to be organized
 
 def plot_deterministic_AI(reward_id, problem_id, exposed_0_19, exposed_19_69, exposed_70, episode_rewards):
 
-    
-    labels  = ["AI"], [None] *  9, ["DT SV", "DT SV2", "DT GR"]
 
-    #N = 232_100 + 515_700 + 261_800
+
+    #population
     N = 566_994.0 + 1528112.0 + 279444.0
     
     # calling the respective Benchmarks
-    rewards_determenisticSV, rewards_det_listSV, statesSV = Benchmarks.evaluate_deterministic_model(reward_id = reward_id, problem_id = problem_id, policy_chosen='policy_Sweden', period='autumn') #Deterministic Swedemm
+    rewards_determenisticSV, statesSV = Benchmarks.evaluate_deterministic_model(reward_id = reward_id, problem_id = problem_id, policy_chosen='policy_Sweden', period='autumn') #Deterministic Swedemm
  
-    rewards_determenisticLO, rewards_det_listLO, statesLO = Benchmarks.evaluate_deterministic_model(reward_id = reward_id, problem_id = problem_id, policy_chosen='policy_Sweden_second', period='FOHM') #Deterministic lockdown
-
-    #rewards_determenisticGR, rewards_det_listGR, statesGR = Benchmarks.evaluate_deterministic_model(reward_id = reward_id, problem_id = problem_id, policy_chosen='policy_Greece', period='autumn') #Deterministic lockdown
+    rewards_determenisticSV_F, statesSV_F = Benchmarks.evaluate_deterministic_model(reward_id = reward_id, problem_id = problem_id, policy_chosen='policy_Sweden_second', period='FOHM') #Deterministic lockdown
 
 
     # autumn period fitted parameters
@@ -45,13 +42,10 @@ def plot_deterministic_AI(reward_id, problem_id, exposed_0_19, exposed_19_69, ex
     DT_exposed_19_69SV = []
     DT_exposed_70SV = []
 
-    DT_exposed_0_19LO = []
-    DT_exposed_19_69LO = []
-    DT_exposed_70LO = []
+    DT_exposed_0_19SV_F = []
+    DT_exposed_19_69SV_F = []
+    DT_exposed_70SV_F = []
 
-    #DT_exposed_0_19GR = []
-    #DT_exposed_19_69GR = []
-    #DT_exposed_70GR = []
 
 
     # the incidence curves appended for Sweden ECDC
@@ -65,42 +59,26 @@ def plot_deterministic_AI(reward_id, problem_id, exposed_0_19, exposed_19_69, ex
     DT_exposed_19_69SV_incidence = np.array(DT_exposed_19_69SV)/N *  1/exposed_rate * (1- unreported_20_69_p2) + np.array(DT_exposed_19_69SV)/N *  1/exposed_rate * (unreported_20_69_p2)
     DT_exposed_70SV_incidence = np.array(DT_exposed_70SV)/N *  1/exposed_rate * (1- unreported_70_p2) + np.array(DT_exposed_19_69SV)/N *  1/exposed_rate * (unreported_20_69_p2)
     
-    #DT_totalSV = np.array(DT_exposed_0_19SV) + np.array(DT_exposed_19_69SV) + np.array(DT_exposed_70SV)
     DT_totalSV = np.array(DT_exposed_0_19SV_incidence) + np.array(DT_exposed_19_69SV_incidence) + np.array(DT_exposed_70SV_incidence)
 
     # the incidence curves appended for Sweden Fitted
-    for i in range(len(statesLO)):
+    for i in range(len(statesSV_F)):
 
-        DT_exposed_0_19LO.append(statesLO[i][3])
-        DT_exposed_19_69LO.append(statesLO[i][4])
-        DT_exposed_70LO.append(statesLO[i][5])
+        DT_exposed_0_19SV_F.append(statesSV_F[i][3])
+        DT_exposed_19_69SV_F.append(statesSV_F[i][4])
+        DT_exposed_70SV_F.append(statesSV_F[i][5])
 
-    DT_exposed_0_19LO_incidence = np.array(DT_exposed_0_19LO)/N *  1/exposed_rate * (1- unreported_0_19_p2) + np.array(DT_exposed_0_19LO)/N *  1/exposed_rate * (unreported_0_19_p2)
-    DT_exposed_19_69LO_incidence = np.array(DT_exposed_19_69LO)/N *  1/exposed_rate * (1- unreported_20_69_p2) + np.array(DT_exposed_19_69LO)/N *  1/exposed_rate * (unreported_20_69_p2)
-    DT_exposed_70LO_incidence = np.array(DT_exposed_70LO)/N *  1/exposed_rate * (1- unreported_70_p2) + np.array(DT_exposed_70LO)/N *  1/exposed_rate * (unreported_70_p2) 
+    DT_exposed_0_19SV_F_incidence = np.array(DT_exposed_0_19SV_F)/N *  1/exposed_rate * (1- unreported_0_19_p2) + np.array(DT_exposed_0_19SV_F)/N *  1/exposed_rate * (unreported_0_19_p2)
+    DT_exposed_19_69SV_F_incidence = np.array(DT_exposed_19_69SV_F)/N *  1/exposed_rate * (1- unreported_20_69_p2) + np.array(DT_exposed_19_69SV_F)/N *  1/exposed_rate * (unreported_20_69_p2)
+    DT_exposed_70SV_F_incidence = np.array(DT_exposed_70SV_F)/N *  1/exposed_rate * (1- unreported_70_p2) + np.array(DT_exposed_70SV_F)/N *  1/exposed_rate * (unreported_70_p2) 
 
-    DT_totalLO = np.array(DT_exposed_0_19LO_incidence) + np.array(DT_exposed_19_69LO_incidence) + np.array(DT_exposed_70LO_incidence)
-
-    # the incidence curves appended for Greece ECDC
-    #for i in range(len(statesGR)):
-
-        #DT_exposed_0_19GR.append(statesGR[i][3])
-        #DT_exposed_19_69GR.append(statesGR[i][4])
-        #DT_exposed_70GR.append(statesGR[i][5])
-
-
-    #DT_exposed_0_19GR_incidence = np.array(DT_exposed_0_19GR)/N *  1/exposed_rate * (1- unreported_0_19_p2) + np.array(DT_exposed_0_19GR)/N *  1/exposed_rate * (unreported_0_19_p2)
-    #DT_exposed_19_69GR_incidence = np.array(DT_exposed_19_69GR)/N *  1/exposed_rate * (1- unreported_20_69_p2) + np.array(DT_exposed_19_69GR)/N *  1/exposed_rate * (unreported_20_69_p2)
-    #DT_exposed_70GR_incidence = np.array(DT_exposed_70GR)/N *  1/exposed_rate * (1- unreported_70_p2) + np.array(DT_exposed_70GR)/N *  1/exposed_rate * (unreported_70_p2)
-
-    #DT_totalGR = np.array(DT_exposed_0_19GR_incidence) + np.array(DT_exposed_19_69GR_incidence) + np.array(DT_exposed_70GR_incidence)
+    DT_totalSV_F = np.array(DT_exposed_0_19SV_F_incidence) + np.array(DT_exposed_19_69SV_F_incidence) + np.array(DT_exposed_70SV_F_incidence)
 
 
 
     total = [None] * len(exposed_0_19)
 
         
-    print(rewards_determenisticSV[0])
 
     # Plotting the deterministcs vs EpideRlearn + the rewards for each
     fig = make_subplots(rows=1, cols=2, subplot_titles=("Incidence Infected", "Rewards"))
@@ -124,13 +102,10 @@ def plot_deterministic_AI(reward_id, problem_id, exposed_0_19, exposed_19_69, ex
         row=1, col=1
     )
     fig.add_trace(
-        go.Scatter(y=DT_totalLO, mode='lines', name='Deterministic Sweden Fitted', marker_color = 'orange'),
+        go.Scatter(y=DT_totalSV_F, mode='lines', name='Deterministic Sweden Fitted', marker_color = 'orange'),
         row=1, col=1
     )
-    #fig.add_trace(
-        #go.Scatter(y=DT_totalGR, mode='lines', name='Deterministic Greece', marker_color = 'green'),
-        #row=1, col=1
-    #)
+
     fig.update_yaxes(title_text="Population %", row=1, col=1)
     fig.update_xaxes(title_text="Weeks", row=1, col=1)
 
@@ -140,13 +115,10 @@ def plot_deterministic_AI(reward_id, problem_id, exposed_0_19, exposed_19_69, ex
             row=1, col=2
     )
     fig.add_trace(
-        go.Scatter(y = [rewards_determenisticLO[0]], name='Reward Deterministic Sweden Fitted' , marker_color = 'orange'),
+        go.Scatter(y = [rewards_determenisticSV_F[0]], name='Reward Deterministic Sweden Fitted' , marker_color = 'orange'),
         row=1, col=2
     )
-    #fig.add_trace(
-        #go.Scatter(y= [rewards_determenisticGR[0]], name='Reward Deterministic Greece', marker_color = 'green'),
-        #row=1, col=2
-    #)
+
     fig.add_trace(
         go.Box(y = episode_rewards, name='Reward Deterministic EpidRLearn', marker_color = 'blue'),
         row=1, col=2
@@ -169,7 +141,7 @@ def evaluate(model, num_episodes, reward_id, problem_id, period):
 
     """
     # This function will only work for a single Environment
-    envr = env_realCase.Epidemic(problem_id = problem_id, reward_id=reward_id, period=period)
+    envr = env_.Epidemic(problem_id = problem_id, reward_id=reward_id, period=period)
 
     all_episode_rewards = []
 
@@ -183,22 +155,6 @@ def evaluate(model, num_episodes, reward_id, problem_id, period):
         exposed_0_19 = []
         exposed_19_69 = []
         exposed_70 = []
-
-        infected_un_0_19 = []
-        infected_un_19_69 = []
-        infected_un_70 = []
-        infected_r_0_19 = []
-        infected_r_19_69 = []
-        infected_r_70 = []
-        
-        recovered_pcrP_0_19 = []
-        recovered_pcrP_19_69 = []
-        recovered_pcrP_70 = []
-
-        recovered_pcrN_0_19 = []
-        recovered_pcrN_19_69 = []
-        recovered_pcrN_70 = []
-        
         episode_rewards = []
         actions = []
 
@@ -211,28 +167,11 @@ def evaluate(model, num_episodes, reward_id, problem_id, period):
 
             action, _states = model.predict(obs)
             actions.append(action)
-            # here, action,a rewards and dones are arrays
-            # because we are using vectorized env
             obs, reward, done, info= envr.step(action)
             
             exposed_0_19.append(obs[3])
             exposed_19_69.append(obs[4])
             exposed_70.append(obs[5])
-
-            infected_un_0_19.append(obs[6])
-            infected_un_19_69.append(obs[7])
-            infected_un_70.append(obs[8])
-            infected_r_0_19.append(obs[9])
-            infected_r_19_69.append(obs[10])
-            infected_r_70.append(obs[11])
-
-            recovered_pcrP_0_19.append(obs[12])
-            recovered_pcrP_19_69.append(obs[13])
-            recovered_pcrP_70.append(obs[14])
-
-            recovered_pcrN_0_19.append(obs[15])
-            recovered_pcrN_19_69.append(obs[16])
-            recovered_pcrN_70.append(obs[17])
 
             episode_rewards.append(reward)
 
@@ -261,16 +200,12 @@ def evaluate(model, num_episodes, reward_id, problem_id, period):
     plot_deterministic_AI(reward_id, problem_id, all_episode_exposed_0_19, all_episode_exposed_19_69, all_episode_exposed_70, all_episode_rewards)
 
     mean_episode_reward = np.mean(all_episode_rewards)
-    
-    #print("Mean reward:", mean_episode_reward, "Num episodes:", num_episodes)
-    
+        
     return mean_episode_reward, actions
 
 
 def plot_sensitivity_analysis(e64, e73, e82, e91):
-    #labels  = ["AI"], [None] *  9, ["DT SV", "DT SV2", "DT GR"]
 
-    #N = 232_100 + 515_700 +261_800
     N = 566_994.0 + 1528112.0 + 279444.0
     
 

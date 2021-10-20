@@ -8,8 +8,7 @@ import matplotlib.pyplot as plt
 import SDEs 
 import math
 import pandas as pd
-#from .__init__ import Epidemic
-#from SDM_EPIDRLEARN.env_realCase import Epidemic 
+
 
 #class SEIR(Agent):
 class SEIR(gym.Env):
@@ -169,7 +168,7 @@ class SEIR(gym.Env):
 
         return self.state, 0, False, info
 
-
+    # implementation of contact reduction for benchmark sweden fitted
     def generate_contact_profile(self, start_days, nr_change_days, contact_changes):
         contact_profile = list()
             
@@ -224,9 +223,9 @@ class SEIR(gym.Env):
 
 
         def GG(y, t):
+            # changed to some
             return np.diag([1, 1, 1, 0, 0, 0 , 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0])
        
-       # integration using the SDEs.py
         dxdt = SDEs.itoEuler(self.seir_ode, GG, X_, t)
 
 

@@ -2,7 +2,7 @@
 import os
 import numpy as np
 import pandas as pd
-import env_realCase
+import env_
 import evaluation_plotting
 import plot_reward
 
@@ -25,7 +25,6 @@ os.makedirs(SAVE_MODEL_PATH, exist_ok=True)
 # Custom actor (pi) and value function (vf) networks
 # of one layer of size 128 each with Relu activation function
 policy_kwargs = dict(activation_fn=th.nn.Tanh,
-#net_arch=[dict(pi=[32, 32], vf=[32, 32])])
 net_arch=[dict(pi=[128], vf=[128])])
 
 
@@ -68,15 +67,6 @@ class SaveOnBestTrainingRewardCallback(BaseCallback):
               if self.verbose > 0:
                 print("Num timesteps: {}".format(self.num_timesteps))
                 print("Best mean reward: {:.2f} - Last mean reward per episode: {:.2f}".format(self.best_mean_reward, mean_reward))
-
-              # New best model, you could save the agent here
-              #if mean_reward > self.best_mean_reward:
-                  #self.best_mean_reward = mean_reward
-                  # Example for saving best model
-                  #if self.verbose > 0:
-                   # print("Saving new best model to {}".format(self.save_path))
-                  #self.model.save(self.save_path)
-
         return True
 
 
@@ -92,7 +82,7 @@ def train(problem_id, reward_id,  time_steps = 250_000):
         print(problem)
         # train
         period = 'spring'
-        envr = env_realCase.Epidemic(problem_id = problem, reward_id=reward_id, period = period)
+        envr = env_.Epidemic(problem_id = problem, reward_id=reward_id, period = period)
         env = Monitor(envr, log_dir) 
 
         # Logs will be saved in log_dir/monitor.csv
@@ -101,13 +91,6 @@ def train(problem_id, reward_id,  time_steps = 250_000):
         model = PPO('MlpPolicy', env, gamma=0.99,  verbose=1, policy_kwargs=policy_kwargs)
         model.learn(total_timesteps=int(time_steps), callback=callback)
 
-        model.save(SAVE_MODEL_PATH+"epidRLearn_Paper2")
+        model.save(SAVE_MODEL_PATH+"epidRLearn_Paper")
 
         plot_reward.plot_results(problem, [log_dir], time_steps, results_plotter.X_TIMESTEPS, "")
-
-        #evaluate
-
-        #period = 'autumn'
-        #envr = env_realCase.Epidemic(problem_id = problem, reward_id=reward_id, period = period)
-
-        #reward, actions = evaluation_plotting.evaluate(model, num_episodes=10, reward_id= reward_id, problem_id = problem, period = period)

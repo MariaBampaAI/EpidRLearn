@@ -52,7 +52,6 @@ class Epidemic(gym.Env):
 		self.unreported_autumn2069 = 0.4763668186715981
 		self.unreported_autumn70 = 0.01
         
-		#self.printit = printit
 		
 		self.problem_id = problem_id  #problem ids for sensitiviry analysis
 		self.reward_id = reward_id #reward ids to compare epidRLearn to other papers
@@ -117,8 +116,7 @@ class Epidemic(gym.Env):
 
 		self.action_history.append(action)
 
-		
-		# r is the reward to be later susceptiblemmed to the total episode rewards
+		#reward
 		r = 0
 		
 		# how many steps have we done? 0 to 26 weeks
@@ -155,7 +153,7 @@ class Epidemic(gym.Env):
 		
 		reward = self.reward(self.susceptible, self.exposed, self.infected_ureported, self.infected_reported,self.recovered_positive, self.recovered_negative, action)
 
-		#appending and calculating the reward as returned by the abo
+		#appending and calculating the reward as returned 
 		r += reward
 
 		# increase the step count
@@ -213,7 +211,6 @@ class Epidemic(gym.Env):
 			infectionState = 0 
 
 
-			# use case for reducing lockdowns
 			if action == 0:
 				# free to move, 100% of health population can contribute
 				people_free_to_move =  healthy_week * 1
@@ -234,7 +231,7 @@ class Epidemic(gym.Env):
 					infectionState -= 0.5
 
 			elif action == 3: 
-				#light-lockdown, 75% of healthy population (stay home if sick, wear masks, limit shops) can contribute 
+				#light-movement restriction, 75% of healthy population (stay home if sick, wear masks, limit shops) can contribute 
 				people_free_to_move =  healthy_week * 0.75 
 				
 				
@@ -254,7 +251,7 @@ class Epidemic(gym.Env):
 
 
 			elif action == 1: 
-				#full lockdown, 25% of healthy population (essential workers) can contribute 
+				#full-movement restriction, 25% of healthy population (essential workers) can contribute 
 				people_free_to_move = healthy_week * 0.25
 
 				
@@ -273,7 +270,7 @@ class Epidemic(gym.Env):
 					infectionState -= 0.5
 
 			elif action == 2: 
-				#semi-lockdown, 50% of healthy population (essential workers + other workers) can contribute 
+				#semi-movement restriction, 50% of healthy population (essential workers + other workers) can contribute 
 				people_free_to_move =  healthy_week * 0.50
 				
 				if  difference_019 > 0:
@@ -296,7 +293,7 @@ class Epidemic(gym.Env):
 
 
 
-
+			# for the sensitivity and extreme case analysis (problem_id)
 			if self.weights_choice == 0:
 				W1 = 0
 				W2 = 1
@@ -307,6 +304,7 @@ class Epidemic(gym.Env):
 				W1 = 0.5
 				W2 = 0.5
 			elif self.weights_choice == 3:
+				#epidrlearn
 				W1 = 0.4 
 				W2 = 0.6
 			elif self.weights_choice == 4:
@@ -354,16 +352,16 @@ class Epidemic(gym.Env):
 		colours = ['white', '#F38383', '#AED2DE', '#CADDA9']
 		incidenceUn = self.exposed[:,0]/sum(self.env.N) *  1/self.env.exposed_rate * unreported_019 + \
 					self.exposed[:,1]/sum(self.env.N) *  1/self.env.exposed_rate * unreported_2069 + self.exposed[:,2]/sum(self.env.N) *  1/self.env.exposed_rate * unreported_70
-		incidenceRe = self.exposed[:,0]/sum(self.env.N) *  1/self.env.exposed_rate * (1-unreported_019) +\
-					self.exposed[:,1]/sum(self.env.N) *  1/self.env.exposed_rate * (1-unreported_2069) + self.exposed[:,2]/sum(self.env.N) *  1/self.env.exposed_rate * (1-unreported_70)
+		#incidenceRe = self.exposed[:,0]/sum(self.env.N) *  1/self.env.exposed_rate * (1-unreported_019) +\
+					#self.exposed[:,1]/sum(self.env.N) *  1/self.env.exposed_rate * (1-unreported_2069) + self.exposed[:,2]/sum(self.env.N) *  1/self.env.exposed_rate * (1-unreported_70)
 
 		# length of action bars
-		lengthSusceptible = {0: 1, 1: max(self.susceptible[:,1]/sum(self.env.N)), 2: max(self.susceptible[:,1]/sum(self.env.N))/2, 3: max(self.susceptible[:,1]/sum(self.env.N))/3}
+		#lengthSusceptible = {0: 1, 1: max(self.susceptible[:,1]/sum(self.env.N)), 2: max(self.susceptible[:,1]/sum(self.env.N))/2, 3: max(self.susceptible[:,1]/sum(self.env.N))/3}
 		lengthExposed = {0: 1, 1: max(self.exposed[:,0]/sum(self.env.N)), 2: max(self.exposed[:,0]/sum(self.env.N))/2, 3: max(self.exposed[:,0]/sum(self.env.N))/3}
 		lengthInfected = {0: 1, 1: max(self.infected_ureported[:,0]/sum(self.env.N)), 2: max(self.infected_ureported[:,0]/sum(self.env.N))/2, 3: max(self.infected_ureported[:,0]/sum(self.env.N))/3}
 		lengthInfected2 = {0: 1, 1: max(self.infected_reported[:,0]/sum(self.env.N)), 2: max(self.infected_reported[:,0]/sum(self.env.N))/2, 3: max(self.infected_reported[:,0]/sum(self.env.N))/3}
-		lengthIcidece = {0: 1, 1: max(incidenceUn), 2: max(incidenceUn)/2, 3: max(incidenceUn)/3}
-		label_text = "no color: 0%, red: 75%, blue: 50%, green: 25%"
+		#lengthIcidece = {0: 1, 1: max(incidenceUn), 2: max(incidenceUn)/2, 3: max(incidenceUn)/3}
+		#label_text = "no color: 0%, red: 75%, blue: 50%, green: 25%"
 		
 		clear_output(wait=True)
 
@@ -401,7 +399,6 @@ class Epidemic(gym.Env):
 		axs[2].bar([i for i in range(len(self.action_history))],
 		[self.action_history[i] * lengthInfected2.get(self.action_history[i]) for i in range(len(self.action_history))], color = [colours[self.action_history[i]] for i in range(len(self.action_history))],
 		 alpha=0.3)
-		 #label=('\n'.join(wrap(label_text, 50))),
 		axs[2].set_xlabel('Weeks')
 		axs[2].set_ylabel('Population %')
 		axs[2].set_title('Prevalence Infected Reported ')
