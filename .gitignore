@@ -110,6 +110,15 @@ ENV/
 env.bak/
 venv.bak/
 
+# Folders
+Figures/
+.Figures/
+.best_model/
+
+# Files
+*.csv/
+*.csv
+
 # Spyder project settings
 .spyderproject
 .spyproject
