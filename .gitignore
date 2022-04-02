@@ -136,3 +136,12 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+
+# files and figures
+*.csv
+*.png 
+*.svg 
+
+# messy old file
+covsim_fitting.ipynb

@@ -26,9 +26,6 @@ def policy_Sweden(actions, week, state):
     _25_lockdown = actions[3]
 
 
-    #if(week <= 22) :
-        #print("Action chosen: _25_lockdown ")
-        #return _25_lockdown
 
     if(week<5):
         #print("Action chosen: _50_lockdown")
@@ -46,9 +43,7 @@ def policy_Sweden_second(actions, week, state):
     
     """
     free_to_move = actions[0]
-    #_75_lockdown = actions[1]
-    #_50_lockdown = actions[2]
-    #_25_lockdown = actions[3]
+
 
 
     if(week>=0):

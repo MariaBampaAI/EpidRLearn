@@ -1,4 +1,5 @@
 import os
+from turtle import color
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -9,6 +10,7 @@ import Benchmarks
 from textwrap import wrap
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
+import matplotlib.patches as mpatches
 
 if not os.path.exists('Figures'):
     os.mkdir("Figures")   
@@ -75,58 +77,55 @@ def plot_deterministic_AI(reward_id, problem_id, exposed_0_19, exposed_19_69, ex
     DT_totalSV_F = np.array(DT_exposed_0_19SV_F_incidence) + np.array(DT_exposed_19_69SV_F_incidence) + np.array(DT_exposed_70SV_F_incidence)
 
 
-
     total = [None] * len(exposed_0_19)
 
         
 
     # Plotting the deterministcs vs EpideRlearn + the rewards for each
-    fig = make_subplots(rows=1, cols=2, subplot_titles=("Incidence Infected", "Rewards"))
-
+    fig, axs = plt.subplots(1, 2)
     for i in range(len(exposed_19_69)):
+        l = list(range(len(exposed_19_69)))
+        if i == l[-1]:
+            label_ = 'EpidRLearn'
+        else:
+            label_ = None
         
         total[i] = np.array(exposed_0_19[i])/N *  1/exposed_rate * (1- unreported_0_19_p2) + np.array(exposed_0_19[i])/N *  1/exposed_rate * (unreported_0_19_p2)\
            + np.array(exposed_19_69[i])/N *  1/exposed_rate * (1- unreported_20_69_p2) + np.array(exposed_19_69[i])/N *  1/exposed_rate * (unreported_20_69_p2)\
             + np.array(exposed_70[i])/N *  1/exposed_rate * (1- unreported_70_p2) + np.array(exposed_70[i])/N *  1/exposed_rate * (unreported_70_p2)
 
-        
-        fig.add_trace(
-            go.Scatter(y=total[i],  mode='lines+markers', name='EpidRLearn', line = dict(dash='dot'), marker_color = 'blue'),
-            row=1, col=1
-        )   
+        axs[0].plot(total[i],  label=label_, color = 'blue')
+
     
+    axs[0].plot(DT_totalSV,label='Baseline Sweden',  color = 'red')
+    axs[0].plot(DT_totalSV_F,label='Baseline Sweden Fitted',  color = 'orange')
+    axs[0].set_xlabel('Weeks')
+    axs[0].set_ylabel('Population %')
+    axs[0].set_title('Infected (Incidence)')
+    axs[0].legend(loc=1)
 
+    axs[1].plot([rewards_determenisticSV[0]], marker ='o', label='Reward Baseline Sweden', color = 'red')
+    axs[1].plot([rewards_determenisticSV_F[0]], marker ='o', label='Reward Baseline Sweden Fitted', color = 'orange')
+    bp = axs[1].boxplot(episode_rewards,notch=True, patch_artist=True)
+    for box in bp['boxes']:
+        # change outline color
+        box.set(color='blue')
 
-    fig.add_trace(
-        go.Scatter(y=DT_totalSV, mode='lines', name='Deterministic Sweden', marker_color = 'red'),
-        row=1, col=1
-    )
-    fig.add_trace(
-        go.Scatter(y=DT_totalSV_F, mode='lines', name='Deterministic Sweden Fitted', marker_color = 'orange'),
-        row=1, col=1
-    )
+    axs[1].set_ylabel('Rewards')
+    axs[1].set_title('Rewards')
 
-    fig.update_yaxes(title_text="Population %", row=1, col=1)
-    fig.update_xaxes(title_text="Weeks", row=1, col=1)
+    #plt.suptitle("EpiRLearn - Baselines", size=16)
+    red_patch = mpatches.Patch(color='red', label='Reward Baseline Sweden')
+    orange_patch = mpatches.Patch(color='orange', label='Reward Baseline Sweden Fitted')
+    blue_patch = mpatches.Patch(color='blue', label='Reward EpidRLearn')
+    plt.legend(handles=[red_patch, orange_patch, blue_patch])
+    plt.gcf().set_size_inches(16, 7)
+    
+    
+    plt.savefig("Figures/EpidLearnVSDeterministic_problem{}.svg".format(problem_id),format="svg")
+    plt.savefig("Figures/EpidLearnVSDeterministic_problem{}.png".format(problem_id))
+    plt.show()
 
-    fig.add_trace(
-        go.Scatter(
-            y = [ rewards_determenisticSV[0]], name='Reward Deterministic Sweden', marker_color = 'red'),
-            row=1, col=2
-    )
-    fig.add_trace(
-        go.Scatter(y = [rewards_determenisticSV_F[0]], name='Reward Deterministic Sweden Fitted' , marker_color = 'orange'),
-        row=1, col=2
-    )
-
-    fig.add_trace(
-        go.Box(y = episode_rewards, name='Reward Deterministic EpidRLearn', marker_color = 'blue'),
-        row=1, col=2
-    )
-
-    fig.update_layout(height=800, width=1000, title_text="EpidRLearn vs Benchmarks")
-    fig.write_image("Figures/EpidLearnVSDeterministic_problem{}.svg".format(problem_id), format="svg")
-    #fig.show()
 
 def evaluate(model, num_episodes, reward_id, problem_id, period):
 
@@ -239,19 +238,16 @@ def plot_sensitivity_analysis(e64, e73, e82, e91):
         total91[i] = np.array(e91.exposed5_0_19[i])/N *  1/exposed_rate * (1- unreported_srping019) + np.array(e91.exposed5_0_19[i])/N *  1/exposed_rate * (unreported_srping019)\
            + np.array(e91.exposed5_19_69[i])/N *  1/exposed_rate * (1- unreported_srping2069) + np.array(e91.exposed5_19_69[i])/N *  1/exposed_rate * (unreported_srping2069)\
             + np.array(e91.exposed5_70[i])/N *  1/exposed_rate * (1- unreported_srping70) + np.array(e91.exposed5_70[i])/N *  1/exposed_rate * (unreported_srping70)
-    
-    fig = go.Figure()
 
-    fig.add_trace(
-        go.Scatter(y=total64,  mode='lines', name='W1= .5, W2 = .5', marker_color = 'blue'))   
-    fig.add_trace(
-        go.Scatter(y=total73,  mode='lines', name='W1= .4, W2 = .6', marker_color = 'red'))
-    fig.add_trace(
-        go.Scatter(y=total82,  mode='lines', name='W1= .3, W2 = .7', marker_color = 'green'))      
-    fig.add_trace(
-        go.Scatter(y=total91,  mode='lines', name='W1= .2, W2 = .8', marker_color = 'brown'))   
+    fig = plt.figure()
+    fig.plot(total64, label='W1= .5, W2 = .5', color='blue')
+    fig.plot(total73, label='W1= .4, W2 = .6', color = 'red')
+    fig.plot(total82, label='W1= .3, W2 = .7', color = 'green')
+    fig.plot(total91, label='W1= .2, W2 = .8', color = 'brown')
+    plt.gcf().set_size_inches(8, 7)
+    plt.legend(loc=2)
     fig.update_yaxes(title_text="Population %")
     fig.update_xaxes(title_text="Weeks")
-    fig.update_layout(width=1000, height=600)
-    fig.write_image("Figures/sensitivity_analysis.svg", format="svg")
-    #fig.show()
+    plt.savefig("Figures/sensitivity_analysis.svg", format="svg")
+    plt.savefig("Figures/sensitivity_analysis.png")
+

@@ -72,7 +72,7 @@ class SaveOnBestTrainingRewardCallback(BaseCallback):
 
 
 
-def train(problem_id, reward_id,  time_steps = 250_000):
+def train(problem_id, reward_id,  model_name, time_steps = 250_000):
     # run the model for the extreme cases and plot,save the results
 
     #problem_id = 0: 
@@ -91,6 +91,7 @@ def train(problem_id, reward_id,  time_steps = 250_000):
         model = PPO('MlpPolicy', env, gamma=0.99,  verbose=1, policy_kwargs=policy_kwargs)
         model.learn(total_timesteps=int(time_steps), callback=callback)
 
-        model.save(SAVE_MODEL_PATH+"epidRLearn_Paper")
+        #model.save(SAVE_MODEL_PATH+"epidRLearn_Paper")
+        model.save(SAVE_MODEL_PATH+model_name)
 
         plot_reward.plot_results(problem, [log_dir], time_steps, results_plotter.X_TIMESTEPS, "")

@@ -352,23 +352,15 @@ class Epidemic(gym.Env):
 		colours = ['white', '#F38383', '#AED2DE', '#CADDA9']
 		incidenceUn = self.exposed[:,0]/sum(self.env.N) *  1/self.env.exposed_rate * unreported_019 + \
 					self.exposed[:,1]/sum(self.env.N) *  1/self.env.exposed_rate * unreported_2069 + self.exposed[:,2]/sum(self.env.N) *  1/self.env.exposed_rate * unreported_70
-		#incidenceRe = self.exposed[:,0]/sum(self.env.N) *  1/self.env.exposed_rate * (1-unreported_019) +\
-					#self.exposed[:,1]/sum(self.env.N) *  1/self.env.exposed_rate * (1-unreported_2069) + self.exposed[:,2]/sum(self.env.N) *  1/self.env.exposed_rate * (1-unreported_70)
 
 		# length of action bars
-		#lengthSusceptible = {0: 1, 1: max(self.susceptible[:,1]/sum(self.env.N)), 2: max(self.susceptible[:,1]/sum(self.env.N))/2, 3: max(self.susceptible[:,1]/sum(self.env.N))/3}
 		lengthExposed = {0: 1, 1: max(self.exposed[:,0]/sum(self.env.N)), 2: max(self.exposed[:,0]/sum(self.env.N))/2, 3: max(self.exposed[:,0]/sum(self.env.N))/3}
 		lengthInfected = {0: 1, 1: max(self.infected_ureported[:,0]/sum(self.env.N)), 2: max(self.infected_ureported[:,0]/sum(self.env.N))/2, 3: max(self.infected_ureported[:,0]/sum(self.env.N))/3}
 		lengthInfected2 = {0: 1, 1: max(self.infected_reported[:,0]/sum(self.env.N)), 2: max(self.infected_reported[:,0]/sum(self.env.N))/2, 3: max(self.infected_reported[:,0]/sum(self.env.N))/3}
-		#lengthIcidece = {0: 1, 1: max(incidenceUn), 2: max(incidenceUn)/2, 3: max(incidenceUn)/3}
-		#label_text = "no color: 0%, red: 75%, blue: 50%, green: 25%"
 		
 		clear_output(wait=True)
 
-
-
 		fig, axs = plt.subplots(1, 3)
-
 
 		# plot the curves
 		axs[0].plot(self.exposed[:,0]/sum(self.env.N),  label='Exposed 0-19', color = '#09289D')
@@ -379,7 +371,7 @@ class Epidemic(gym.Env):
 		 alpha=0.3)
 		axs[0].set_xlabel('Weeks')
 		axs[0].set_ylabel('Population %')
-		axs[0].set_title('Exposed Pervalence')
+		axs[0].set_title('Exposed (Prevalence)')
 		axs[0].legend()
 
 		axs[1].plot(self.infected_ureported[:,0]/sum(self.env.N), label='Infected Unreported 0-19', color = '#09289D')
@@ -389,8 +381,7 @@ class Epidemic(gym.Env):
 		[self.action_history[i] * lengthInfected.get(self.action_history[i]) for i in range(len(self.action_history))], color = [colours[self.action_history[i]] for i in range(len(self.action_history))],
 		alpha=0.3)
 		axs[1].set_xlabel('Weeks')
-		axs[1].set_ylabel('Population %')
-		axs[1].set_title('Prevalence Infected Unreported')
+		axs[1].set_title('Infected Unreported (Prevalence)')
 		axs[1].legend()
 		
 		axs[2].plot(self.infected_reported[:,0]/sum(self.env.N), label='Infected Reported 0-19', color = '#09289D')
@@ -400,8 +391,7 @@ class Epidemic(gym.Env):
 		[self.action_history[i] * lengthInfected2.get(self.action_history[i]) for i in range(len(self.action_history))], color = [colours[self.action_history[i]] for i in range(len(self.action_history))],
 		 alpha=0.3)
 		axs[2].set_xlabel('Weeks')
-		axs[2].set_ylabel('Population %')
-		axs[2].set_title('Prevalence Infected Reported ')
+		axs[2].set_title('Infected Reported (Prevalence)')
 		axs[2].legend()
 		
 
@@ -411,67 +401,49 @@ class Epidemic(gym.Env):
 		plt.savefig("Figures/Policies_problem{}.svg".format(self.weights_choice))
 		
 
-				
-		
+		#plotly to matplotlib for better visualization for the paper (after reviewers' comments)
+		#plotting the incidence reported and unreported per age group 
+		fig, axs = plt.subplots(1, 2)
+		axs[0].plot(self.exposed[:,0]/sum(self.env.N) *  1/self.env.exposed_rate * unreported_019, label="Unreported 0-19 (Incidence)", color = '#09289D')
+		axs[0].plot(self.exposed[:,1]/sum(self.env.N) *  1/self.env.exposed_rate * unreported_2069, label='Unreported 20-69 (Incidence)"', color = '#9D0000')
+		axs[0].plot(self.exposed[:,2]/sum(self.env.N) *  1/self.env.exposed_rate * unreported_70, label='Unreported 70+ (Incidence)',  color = '#108D27')
 
-		# Plot the incidence curves
-		fig = make_subplots(rows=1, cols=2)
+		axs[0].set_xlabel('Weeks')
+		axs[0].set_ylabel('Population %')
+		axs[0].set_title('EpidRLearn Infected Unreported (Incidence)')
+		axs[0].legend(loc=1)
 
+		axs[1].plot((self.exposed[:,0]/sum(self.env.N) *  1/self.env.exposed_rate * (1-unreported_019)), label="Reported 0-19 (Incidence)", color = '#09289D')
+		axs[1].plot((self.exposed[:,1]/sum(self.env.N) *  1/self.env.exposed_rate * (1-unreported_2069)), label='Reported 20-69 (Incidence)', color = '#9D0000')
+		axs[1].plot((self.exposed[:,2]/sum(self.env.N) *  1/self.env.exposed_rate * (1-unreported_70)), label='Unreported 70+ (Incidence)',  color = '#108D27')
 
-		fig.add_trace(
-				go.Scatter(y=self.exposed[:,0]/sum(self.env.N) *  1/self.env.exposed_rate * unreported_019,  mode='lines', name="Incidence Unreported 0-19", marker_color = '#09289D'),
-				row=1, col=1
-			) 
+		axs[1].set_xlabel('Weeks')
+		axs[1].set_title('EpidRLearn Infected Reported (Incidence)')
+		axs[1].legend(loc=1)
 
-		fig.add_trace(
-				go.Scatter(y=self.exposed[:,1]/sum(self.env.N) *  1/self.env.exposed_rate * unreported_2069,  mode='lines', name="Incidence Unreported 20-69", marker_color = '#9D0000'),
-				row=1, col=1
-			)
-		fig.add_trace(
-				go.Scatter(y=self.exposed[:,2]/sum(self.env.N) *  1/self.env.exposed_rate * unreported_70,  mode='lines', name= "Incidence Unreported 70+", marker_color = '#108D27'),
-				row=1, col=1
-			) 
-		fig.update_yaxes(title_text="Population %", row=1, col=1)
-		fig.update_xaxes(title_text="Weeks", row=1, col=1)
-		fig.update_layout(height=600, width=1000, title_text="EpidRLearn Incidence Curves")
-
-		fig.add_trace(
-				go.Scatter(y=(self.exposed[:,0]/sum(self.env.N) *  1/self.env.exposed_rate * (1-unreported_019)),  mode='lines', name="Incidence Reported 0-19", marker_color = '#09289D'),
-				row=1, col=2
-			) 
-
-		fig.add_trace(
-				go.Scatter(y=(self.exposed[:,1]/sum(self.env.N) *  1/self.env.exposed_rate * (1-unreported_2069)),  mode='lines', name="Incidence Reported 20-69", marker_color = '#9D0000'),
-				row=1, col=2
-			)
-		fig.add_trace(
-				go.Scatter(y=(self.exposed[:,2]/sum(self.env.N) *  1/self.env.exposed_rate * (1-unreported_70)),  mode='lines', name= "Incidence Reported 70+", marker_color = '#108D27'),
-				row=1, col=2
-			) 
-
-		fig.update_yaxes(title_text="Population %", row=1, col=2)
-		fig.update_xaxes(title_text="Weeks", row=1, col=2)
-		fig.update_layout(height=600, width=1000)
-		fig.write_image("Figures/IncidenceEpidLearnAgeGroups_problem{}.svg".format(self.weights_choice), format="svg", engine='kaleido')
+		plt.gcf().set_size_inches(16, 7)
+		plt.legend(loc=1)
+		plt.savefig("Figures/IncidenceEpidLearnAgeGroups_problem{}.png".format(self.weights_choice))
+		plt.savefig("Figures/IncidenceEpidLearnAgeGroups_problem{}.svg".format(self.weights_choice))
 
 
-		fig = go.Figure()
 
+		#plotting the incidence reported and unreported sum of all age groups
+		fig = plt.figure()
 
-		fig.add_trace(
-				go.Scatter(y=self.exposed[:,0]/sum(self.env.N) *  1/self.env.exposed_rate * unreported_019 + \
-					self.exposed[:,1]/sum(self.env.N) *  1/self.env.exposed_rate * unreported_2069 + self.exposed[:,2]/sum(self.env.N) *  1/self.env.exposed_rate * unreported_70,  \
-					mode='lines', name="Incidence Unreported 0-19", marker_color = '#09289D'),
-			) 
-
-		fig.add_trace(
-				go.Scatter(y=self.exposed[:,0]/sum(self.env.N) *  1/self.env.exposed_rate * (1-unreported_019) +\
-					self.exposed[:,1]/sum(self.env.N) *  1/self.env.exposed_rate * (1-unreported_2069) + self.exposed[:,2]/sum(self.env.N) *  1/self.env.exposed_rate * (1-unreported_70),\
-					mode='lines', name="Incidence Reported 0-19", marker_color = '#9D0000'),
-			) 
-
-
-		fig.update_yaxes(title_text="Population %")
-		fig.update_xaxes(title_text="Weeks")
-		fig.update_layout(height=800, width=1000)
-		fig.write_image("Figures/IncidenceEpidLearn_SUM_AgeGroups_problem{}.svg".format(self.weights_choice), format="svg", engine='kaleido')
+		plt.plot(self.exposed[:,0]/sum(self.env.N) *  1/self.env.exposed_rate * unreported_019 + \
+					self.exposed[:,1]/sum(self.env.N) *  1/self.env.exposed_rate * unreported_2069 + \
+						 self.exposed[:,2]/sum(self.env.N) *  1/self.env.exposed_rate * unreported_70, \
+							label="Infected Unreported (Incidence)", color = '#09289D' ) 
+		plt.plot(self.exposed[:,0]/sum(self.env.N) *  1/self.env.exposed_rate * (1-unreported_019) + \
+					self.exposed[:,1]/sum(self.env.N) *  1/self.env.exposed_rate * (1-unreported_2069)+ \
+						self.exposed[:,2]/sum(self.env.N) *  1/self.env.exposed_rate * (1-unreported_70),\
+							 label="Infected Reported (Incidence)", color = '#9D0000')
+		plt.xlabel('Weeks')
+		plt.ylabel('Population %')
+		plt.title('EpidRLearn Infected (Incidence)')
+		plt.legend(loc=1)
+		plt.gcf().set_size_inches(8, 7)
+		plt.savefig("Figures/IncidenceEpidLearnSUMAgeGroups_problem{}.png".format(self.weights_choice))
+		plt.savefig("Figures/IncidenceEpidLearnSUMAgeGroups_problem{}.svg".format(self.weights_choice))
+	
