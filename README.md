@@ -1,4 +1,4 @@
-# EpidRLearn
+# EpidRLearn - text here and pdf paper TBA
 ## EpidRLearn: Learning intervention strategies for epidemics with Reinforcement Learning
 
 
