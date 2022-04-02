@@ -1,11 +1,9 @@
 from gym import spaces
 import numpy as np
-import numpy
-import pickle
 import gym
 from scipy.integrate import odeint
 import matplotlib.pyplot as plt
-import SDEs 
+import helpers.SDEs as SDEs
 import math
 import pandas as pd
 

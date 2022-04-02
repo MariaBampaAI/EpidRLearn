@@ -8,8 +8,7 @@ import matplotlib.pyplot as plt
 from .seir import SEIR
 from IPython.display import clear_output
 from textwrap import wrap
-import plotly.graph_objects as go
-from plotly.subplots import make_subplots
+
 
 
 class Epidemic(gym.Env):

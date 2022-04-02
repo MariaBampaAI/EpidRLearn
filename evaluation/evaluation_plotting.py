@@ -1,15 +1,9 @@
 import os
-from turtle import color
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-#import math 
-#import pickle
 import env_
-import Benchmarks
-from textwrap import wrap
-from plotly.subplots import make_subplots
-import plotly.graph_objects as go
+import evaluation.Baselines as Baselines
 import matplotlib.patches as mpatches
 
 if not os.path.exists('Figures'):
@@ -26,10 +20,10 @@ def plot_deterministic_AI(reward_id, problem_id, exposed_0_19, exposed_19_69, ex
     #population
     N = 566_994.0 + 1528112.0 + 279444.0
     
-    # calling the respective Benchmarks
-    rewards_determenisticSV, statesSV = Benchmarks.evaluate_deterministic_model(reward_id = reward_id, problem_id = problem_id, policy_chosen='policy_Sweden', period='autumn') #Deterministic Swedemm
+    # calling the respective Baselines
+    rewards_determenisticSV, statesSV = Baselines.evaluate_deterministic_model(reward_id = reward_id, problem_id = problem_id, policy_chosen='policy_Sweden', period='autumn') #Deterministic Swedemm
  
-    rewards_determenisticSV_F, statesSV_F = Benchmarks.evaluate_deterministic_model(reward_id = reward_id, problem_id = problem_id, policy_chosen='policy_Sweden_second', period='FOHM') #Deterministic lockdown
+    rewards_determenisticSV_F, statesSV_F = Baselines.evaluate_deterministic_model(reward_id = reward_id, problem_id = problem_id, policy_chosen='policy_Sweden_second', period='FOHM') #Deterministic lockdown
 
 
     # autumn period fitted parameters
@@ -195,7 +189,7 @@ def evaluate(model, num_episodes, reward_id, problem_id, period):
 
 
 
-    # passing EpidRLearn observation to be plotted together with benchmarks
+    # passing EpidRLearn observation to be plotted together with Baselines
     plot_deterministic_AI(reward_id, problem_id, all_episode_exposed_0_19, all_episode_exposed_19_69, all_episode_exposed_70, all_episode_rewards)
 
     mean_episode_reward = np.mean(all_episode_rewards)

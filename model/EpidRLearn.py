@@ -1,16 +1,14 @@
 # Verificition of EpidRLearn, exteme cases and sensitivity analysis of the reward
 import os
 import numpy as np
-import pandas as pd
 import env_
-import evaluation_plotting
-import plot_reward
+import model.plot_reward as plot_reward
 
 from stable_baselines3 import PPO
 from stable_baselines3.common.monitor import Monitor
 from stable_baselines3.common.callbacks import BaseCallback
 from stable_baselines3.common import results_plotter
-from stable_baselines3.common.results_plotter import load_results, ts2xy, plot_results
+from stable_baselines3.common.results_plotter import load_results, ts2xy
 import torch as th
 
 
@@ -26,13 +24,6 @@ os.makedirs(SAVE_MODEL_PATH, exist_ok=True)
 # of one layer of size 128 each with Relu activation function
 policy_kwargs = dict(activation_fn=th.nn.Tanh,
 net_arch=[dict(pi=[128], vf=[128])])
-
-
-
-
-
-from stable_baselines3.common.callbacks import BaseCallback
-
 
 class SaveOnBestTrainingRewardCallback(BaseCallback):
     """

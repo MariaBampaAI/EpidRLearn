@@ -1,25 +1,18 @@
-from cProfile import label
 import os
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import math 
-import pickle
+
 import env_
-import Benchmarks
-from textwrap import wrap
-from plotly.subplots import make_subplots
-import plotly.graph_objects as go
-from IPython.display import clear_output
 
 
-import plot_reward
+import model.plot_reward as plot_reward
 
 from stable_baselines3 import PPO
 from stable_baselines3.common.monitor import Monitor
 from stable_baselines3.common.callbacks import BaseCallback
 from stable_baselines3.common import results_plotter
-from stable_baselines3.common.results_plotter import load_results, ts2xy, plot_results
+from stable_baselines3.common.results_plotter import load_results, ts2xy
 import torch as th
 
 
@@ -39,7 +32,6 @@ net_arch=[dict(pi=[128], vf=[128])])
 
 
 
-from stable_baselines3.common.callbacks import BaseCallback
 
 
 class SaveOnBestTrainingRewardCallback(BaseCallback):

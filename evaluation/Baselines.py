@@ -2,7 +2,6 @@ import os
 import matplotlib.pyplot as plt
 import numpy as np
 import env_
-import math 
 if not os.path.exists('Figures'):
     os.mkdir("Figures")    
 
